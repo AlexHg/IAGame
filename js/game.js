@@ -14,7 +14,7 @@ var limitY = 1050;
 var player;
 var cursors;
 var coords = [];
-var coinLen = 70;
+var coinLen = 2;
 var threeLen = 40;
 
 
@@ -36,63 +36,12 @@ var lastMove = 0;
                            : document.fireEvent(event, keyboardEvent);
   }
 */
-
-function IAMovement(){
-    var moves = Math.floor((Math.random() * 40) + 5);
-    var move = 0;
-    
-    switch(Math.floor((Math.random() * 4) + 1)){
-        case 1: 
-            while(move < moves){
-                player.animations.play('up', 5, true);
-                //player.body.static = true;
-                game.add.tween(player).to({x: player.x, y: player.y+20}, 1000, Phaser.Easing.Quadratic.InOut, true)
-                //player.y = player.y + 5;
-                //player.body.y = player.y + 50;
-               //player.body.static = false;
-                move++;
-                console.log(move+"/"+moves);
-            }
-            break;
-        case 2: 
-            while(move < moves){
-                player.animations.play('down', 5, true);
-                //player.body.static = true;
-                //player.y = player.y - 5;
-                game.add.tween(player).to({x: player.x, y: player.y-20}, 1000, Phaser.Easing.Quadratic.InOut, true)
-                //player.body.y = player.y - 50;
-                //player.body.static = false;
-                move++;
-                console.log(move+"/"+moves);
-            }
-            break;
-        case 3: 
-            while(move < moves){
-                player.animations.play('left', 5, true);
-                game.add.tween(player).to({x: player.x-20, y: player.y}, 1000, Phaser.Easing.Quadratic.InOut, true)
-                //player.body.static = true;
-                //player.x = player.x - 5;
-                //player.body.x = player.x - 50;
-                //player.body.static = false;
-                move++;
-                console.log(move+"/"+moves);
-            }
-            break;
-        case 4: 
-            while(move < moves){
-                player.animations.play('right', 5, true);
-                game.add.tween(player).to({x: player.x+50, y: player.y}, 1000, Phaser.Easing.Quadratic.InOut, true)
-                //player.body.static = true;
-                //player.x = player.x + 5;
-                //player.body.x = player.x + 50;
-               // player.body.static = false;
-                move++;
-                console.log(move+"/"+moves);
-            }
-            break;
-    }  
-    console.log(move);  
+function pause(milliseconds) {
+	var dt = new Date();
+	while ((new Date()) - dt <= milliseconds) { /* Do nothing */ }
 }
+
+
 
 function createCoin(x, y){
     var coin = game.add.sprite(x, y, 'coin');
@@ -100,6 +49,7 @@ function createCoin(x, y){
     coin.body.static = true;
     coin.body.onBeginContact.add(function(arr){
         var coin = this[1];
+        document.querySelector("#coin-sound").play();
         coin.kill();
         updateCoinCounter();
     }, [this, coin]);
@@ -110,6 +60,7 @@ function createThree(x,y){
     game.physics.p2.enable(three);
     three.body.static = true;
     three.body.onBeginContact.add(function(){
+        document.querySelector("#block-sound").play();
         console.log("choque");
     }, null);
 }
@@ -124,9 +75,10 @@ function addCoords(x,y){
 
 function updateCoinCounter(){
     var coins = document.querySelector("#coincount");
-    if(parseInt(coins.innerText) < 10) coins.innerText = '0'+(parseInt(coins.innerText) + 1);
+    if(parseInt(coins.innerText) < 9) coins.innerText = '0'+(parseInt(coins.innerText) + 1);
     else coins.innerText = parseInt(coins.innerText) + 1;
     if(parseInt(coins.innerText) >= coinLen){
+        document.querySelector("#win-sound").play();
         alert("GANASTE");
         location.reload();
     }
@@ -134,6 +86,7 @@ function updateCoinCounter(){
 
 function create() {
     
+    document.querySelector("#background-music").volume = 0.2;
     game.add.tileSprite(0, 0, limitX, limitY, 'background');
 
     game.world.setBounds(0, 0, limitX, limitY);
@@ -155,7 +108,7 @@ function create() {
     
 
     //Distribuye fichas por todo el mapa
-    for(var i = 0; i < coinLen; i++){
+    for(var i = 0; i < coinLen+5; i++){
 
         var x = Math.floor((Math.random() * limitX));
         var y = Math.floor((Math.random() * limitY));
@@ -182,15 +135,16 @@ function create() {
         addCoords(x,y);
     }
 
-
+    
+    
 }
 
+
 function update() {
-    
     player.body.setZeroVelocity();
     player.body.fixedRotation = true;
     
-    if (cursors.up.isDown)
+    if (cursors.up.isDown )
     {
         player.body.moveUp(200)
         player.animations.play('up', 5, true);
@@ -200,8 +154,7 @@ function update() {
         player.animations.play('down', 5, true);
         player.body.moveDown(200);
     }
-
-    if (cursors.left.isDown)
+    else if (cursors.left.isDown)
     {
         player.animations.play('left', 5, true);
         player.body.velocity.x = -200;
@@ -210,6 +163,8 @@ function update() {
     {
         player.animations.play('right', 5, true);
         player.body.moveRight(200);
+    }else{
+        ///player.animations.play('down', 0, true);
     }
     //player.body.setZeroVelocity();
 }
@@ -218,6 +173,7 @@ function render() {
 
     //game.debug.cameraInfo(game.camera, 32, 32);
     //game.debug.spriteCoords(player, 32, 500);
+    
 
 }
 
