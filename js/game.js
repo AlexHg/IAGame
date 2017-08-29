@@ -14,8 +14,8 @@ var limitY = 1050;
 var player;
 var cursors;
 var coords = [];
-var coinLen = 80;
-var threeLen = 70;
+var coinLen = 70;
+var threeLen = 40;
 
 
 var collite = false;
@@ -126,6 +126,10 @@ function updateCoinCounter(){
     var coins = document.querySelector("#coincount");
     if(parseInt(coins.innerText) < 10) coins.innerText = '0'+(parseInt(coins.innerText) + 1);
     else coins.innerText = parseInt(coins.innerText) + 1;
+    if(parseInt(coins.innerText) >= coinLen){
+        alert("GANASTE");
+        location.reload();
+    }
 }
 
 function create() {
