@@ -1,4 +1,4 @@
-var game = new Phaser.Game(1200, 750, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(1200, 750, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
 
@@ -17,6 +17,82 @@ var coords = [];
 var coinLen = 80;
 var threeLen = 70;
 
+
+var collite = false;
+var lastMove = 0;
+
+/*function fireKeyboardEvent(event, keycode) {
+    var keyboardEvent = document.createEventObject ?
+        document.createEventObject() : document.createEvent("Events");
+
+    if(keyboardEvent.initEvent) {
+        keyboardEvent.initEvent(event, true, true);
+    }
+
+    keyboardEvent.keyCode = keycode;
+    keyboardEvent.which = keycode;
+
+    document.dispatchEvent ? document.dispatchEvent(keyboardEvent) 
+                           : document.fireEvent(event, keyboardEvent);
+  }
+*/
+
+function IAMovement(){
+    var moves = Math.floor((Math.random() * 40) + 5);
+    var move = 0;
+    
+    switch(Math.floor((Math.random() * 4) + 1)){
+        case 1: 
+            while(move < moves){
+                player.animations.play('up', 5, true);
+                //player.body.static = true;
+                game.add.tween(player).to({x: player.x, y: player.y+20}, 1000, Phaser.Easing.Quadratic.InOut, true)
+                //player.y = player.y + 5;
+                //player.body.y = player.y + 50;
+               //player.body.static = false;
+                move++;
+                console.log(move+"/"+moves);
+            }
+            break;
+        case 2: 
+            while(move < moves){
+                player.animations.play('down', 5, true);
+                //player.body.static = true;
+                //player.y = player.y - 5;
+                game.add.tween(player).to({x: player.x, y: player.y-20}, 1000, Phaser.Easing.Quadratic.InOut, true)
+                //player.body.y = player.y - 50;
+                //player.body.static = false;
+                move++;
+                console.log(move+"/"+moves);
+            }
+            break;
+        case 3: 
+            while(move < moves){
+                player.animations.play('left', 5, true);
+                game.add.tween(player).to({x: player.x-20, y: player.y}, 1000, Phaser.Easing.Quadratic.InOut, true)
+                //player.body.static = true;
+                //player.x = player.x - 5;
+                //player.body.x = player.x - 50;
+                //player.body.static = false;
+                move++;
+                console.log(move+"/"+moves);
+            }
+            break;
+        case 4: 
+            while(move < moves){
+                player.animations.play('right', 5, true);
+                game.add.tween(player).to({x: player.x+50, y: player.y}, 1000, Phaser.Easing.Quadratic.InOut, true)
+                //player.body.static = true;
+                //player.x = player.x + 5;
+                //player.body.x = player.x + 50;
+               // player.body.static = false;
+                move++;
+                console.log(move+"/"+moves);
+            }
+            break;
+    }  
+    console.log(move);  
+}
 
 function createCoin(x, y){
     var coin = game.add.sprite(x, y, 'coin');
@@ -72,6 +148,7 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();
 
     game.camera.follow(player);
+    
 
     //Distribuye fichas por todo el mapa
     for(var i = 0; i < coinLen; i++){
