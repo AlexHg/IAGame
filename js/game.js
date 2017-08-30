@@ -11,11 +11,11 @@ function preload() {
 
 var limitX = 2200;
 var limitY = 1050;
-var player;
+var player, player2;
 var cursors;
 var coords = [];
-var coinLen = 2;
-var threeLen = 40;
+var coinLen = 70;
+var threeLen = 20;
 
 
 var collite = false;
@@ -94,17 +94,24 @@ function create() {
     game.physics.startSystem(Phaser.Physics.P2JS);
 
     //Player Declarations
-    player = game.add.sprite(game.world.centerX, game.world.centerY, 'player');
+    player = game.add.sprite(game.world.centerX-30, game.world.centerY, 'player');
     player.animations.add('down',[0,1,2]);
     player.animations.add('left',[12,13,14]);
     player.animations.add('right',[24,25,26]);
     player.animations.add('up',[36,37,38]);
+
+    player2 = game.add.sprite(game.world.centerX+30, game.world.centerY, 'player');
+    player2.animations.add('down',[3,4,5]);
+    player2.animations.add('left',[15,16,17]);
+    player2.animations.add('right',[27,28,29]);
+    player2.animations.add('up',[39,40,41]);
     
     game.physics.p2.enable(player);
+    game.physics.p2.enable(player2);
 
     cursors = game.input.keyboard.createCursorKeys();
 
-    game.camera.follow(player);
+    game.camera.follow(player2);
     
 
     //Distribuye fichas por todo el mapa
@@ -135,36 +142,113 @@ function create() {
         addCoords(x,y);
     }
 
+
     
-    
+
 }
+
+var idMoveDown;
+function moveDown(){
+    game.physics.p2.enable(player,false);
+    player.body.x+=0;
+    player.body.y+=3;
+    player.animations.play('down', 5, true);
+}
+var idMoveUp;
+function moveUp(){
+    game.physics.p2.enable(player,false);
+    player.body.x+=0;
+    player.body.y-=3;
+    player.animations.play('up', 5, true);
+}
+var idMoveLeft;
+function moveLeft(){
+    game.physics.p2.enable(player,false);
+    player.body.x-=3;
+    player.body.y+=0;
+    player.animations.play('left', 5, true);
+}
+var idMoveRight;
+function moveRight(){
+    game.physics.p2.enable(player,false);
+    player.body.x+=3;
+    player.body.y+=0;
+    player.animations.play('right', 5, true);
+}
+
+function stopMove(){
+    //player.animations.play('down', 0, true);
+    clearInterval(idMoveLeft);
+    clearInterval(idMoveRight);
+    clearInterval(idMoveDown);
+    clearInterval(idMoveUp);
+}
+
+setInterval(IaMove, 1000);
+
+function IaMove(){
+
+    switch( Math.floor((Math.random() * 5) + 1) ){
+        case 1: stopMove() 
+                idMoveLeft = setInterval(function(){
+                    moveLeft();
+                },12); 
+            break;
+        case 2: stopMove()
+                idMoveUp = setInterval(function(){
+                    moveUp();
+                },12);
+            break;
+        case 3: stopMove()
+                idMoveDown = setInterval(function(){
+                    moveDown();
+                },12);
+            break;
+        case 4: stopMove()
+                idMoveRight = setInterval(function(){
+                    moveRight();
+                },12);
+            break;
+        default: stopMove();
+    }
+        
+}
+
+    
+
+
 
 
 function update() {
+    player2.body.setZeroVelocity();
+    player2.body.fixedRotation = true;
+
+
     player.body.setZeroVelocity();
     player.body.fixedRotation = true;
     
+
     if (cursors.up.isDown )
     {
-        player.body.moveUp(200)
-        player.animations.play('up', 5, true);
+        player2.body.moveUp(250)
+        player2.animations.play('up', 5, true);
     }
     else if (cursors.down.isDown)
     {
-        player.animations.play('down', 5, true);
-        player.body.moveDown(200);
+        player2.animations.play('down', 5, true);
+        player2.body.moveDown(250);
     }
     else if (cursors.left.isDown)
     {
-        player.animations.play('left', 5, true);
-        player.body.velocity.x = -200;
+        player2.animations.play('left', 5, true);
+        player2.body.velocity.x = -250;
     }
     else if (cursors.right.isDown)
     {
-        player.animations.play('right', 5, true);
-        player.body.moveRight(200);
+        player2.animations.play('right', 5, true);
+        player2.body.moveRight(250);
     }else{
-        ///player.animations.play('down', 0, true);
+        player2.animations.play('down', 5, true);
     }
     //player.body.setZeroVelocity();
 }
